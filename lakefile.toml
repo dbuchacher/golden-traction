@@ -1,0 +1,14 @@
+name = "GoldenTraction"
+version = "0.1.0"
+defaultTargets = ["Golden"]
+
+[leanOptions]
+relaxedAutoImplicit = false
+
+[[require]]
+name = "CottLean"
+git = "https://github.com/sibarum/cott-lean"
+rev = "025897b09b4e3e71c0f4a2df6e03bef80a39155c"
+
+[[lean_lib]]
+name = "Golden"
