@@ -17,6 +17,25 @@ no `sorry`, only Lean's standard axioms (CI runs the check on every push).
 It covers the combinatorial layer only: the substitution, its matrix, its parity and its conjugation. The
 spectral and physical parts of Null Theory are out of scope here.
 
+## Where this came from
+
+This started as a thread on X. We pointed out that Null Theory reads `∅` two ways: as absence in Definition
+2, and as a balance in Remark 216. Tristan replied:
+
+> ∅ is the subset of all sets, so it's actually happening everywhere. That's why you have cosmic inflation
+> universally. It's also why the big bang is pre-time and one point, infinitely dense. ∅ → {∅} is also
+> pre-time, one point, infinitely dense.
+
+This repository is our answer, written so Lean can check it. Two parts of it respond to that thread directly:
+
+- **"Happening everywhere" is the stronger half.** If `∅` is a subset of every set, it is in every iterate
+  too, not only before the first one. On the pairs, the empty word is fixed by `σ` at every depth
+  (`σⁿ(ε) = ε`), and its count `T(0,0)` is the unit inside every count. So "happening everywhere" and
+  "pre-time" pull against each other, and the checked statements side with the first: the bang is not before
+  time, it is happening at every depth, now. See [The empty word is at every depth](#what-is-proved).
+- **The substitution matrix has a second reading.** Read backward, `[[1,1],[1,0]]` becomes `[[0,1],[1,−1]]`,
+  and the flip that Null Theory carries as a separate parity sits inside the step. That is the next section.
+
 ## One table, two ways to read it
 
 Null Theory's substitution matrix reads the step forward. The same step read from the other end, with the
