@@ -17,6 +17,55 @@ no `sorry`, only Lean's standard axioms (CI runs the check on every push).
 It covers the combinatorial layer only: the substitution, its matrix, its parity and its conjugation. The
 spectral and physical parts of Null Theory are out of scope here.
 
+## One table, two ways to read it
+
+Null Theory's substitution matrix reads the step forward. The same step read from the other end, with the
+sign flipped, is a second table:
+
+```
+   forward (Null Theory)          backward (the flipped reading)
+
+      ┌       ┐                      ┌        ┐
+      │ 1   1 │                      │ 0    1 │
+      │ 1   0 │                      │ 1   −1 │
+      └       ┘                      └        ┘
+
+   newer + older                  older − newer
+   multiply by ω = φ              multiply by _1 = 1/φ
+   det = −1                       det = −1
+```
+
+They are exact inverses, `[[1,1],[1,0]] · [[0,1],[1,−1]] = I` both ways round, so neither table loses anything
+the other keeps. The backward one is the Fibonacci numbers with every other sign flipped:
+
+```
+n          0    1    2    3    4    5    6    7    8
+F(n)       0    1    1    2    3    5    8   13   21      forward:  newer + older
+G(n)       0   −1    1   −2    3   −5    8  −13   21      backward: older − newer
+
+F(n) mod 3 0    1    1    2    0    2    2    1    0      home at 8
+G(n) mod 3 0    2    1    1    0    1    2    2    0      home at 8
+```
+
+Checked in Lean:
+
+```lean
+theorem qmat_underOne : qmat 1 1 «_1» = !![0, 1; 1, -1]              -- the backward table is ×(1/φ)
+theorem walker_mul_sigma : !![0, 1; 1, -1] * !![1, 1; 1, 0] = 1 ∧
+                           !![1, 1; 1, 0] * !![0, 1; 1, -1] = 1      -- exact inverses
+theorem step_back (x : T) : gtimes (gtimes x «ω») «_1» = x            -- forward then back, on every pair
+theorem flipped_fib (n : ℕ) : (-1)^(n+2) * F(n+2) = (-1)^n * F(n) - (-1)^(n+1) * F(n+1)
+theorem sigma_mod3_lap  : [[1,1],[1,0]]^8 = 1 ∧ [[1,1],[1,0]]^4 ≠ 1   -- over ZMod 3
+theorem walker_mod3_lap : [[0,1],[1,-1]]^8 = 1 ∧ [[0,1],[1,-1]]^4 ≠ 1
+```
+
+(Statements abbreviated; the exact ones are in [`Golden.lean`](Golden.lean).)
+
+What this says about the framework: Null Theory has the flip, but as a separate `ℤ/2` grading laid on top of
+the step (its "Möbius parity", `det M = −1`). In the backward table the flip is inside the step itself.
+Direction stops being a label on the step and becomes which end you read it from. The `det = −1` is exactly
+why the backward walk stays on the integers. The backward reading was maxi's noticing.
+
 ## The dictionary
 
 A word over {A, B} is counted as the pair `T(#A, #B)`. The letter `A` is `ω = T(1,0)` and `B` is
@@ -66,12 +115,8 @@ counts of `σⁿ(A)` carry `(−1)ⁿ⁺¹` (`gnorm_counts_sigma_iterate`), whic
 (`gconj`). It undoes itself (`gconj_gconj`), and a pair times its flip lands on `T(0, N)`, the norm as a
 pair (`gtimes_gconj`).
 
-**Run backward, the step is multiplication by 1/φ.** `[[0,1],[1,−1]]` is multiplication by `_1 = T(1,−1)`,
-which is `ω − 1 = 1/φ` in this row (`qmat_underOne`). It is the exact inverse of `M`, both ways round
-(`walker_mul_sigma`), and it undoes the step on every pair (`step_back`). Its sequence is the Fibonacci
-numbers with every other sign flipped, "older minus newer" (`flipped_fib`). The `det = −1` is why the
-backward walk stays on the integers. Mod 3, both matrices have order exactly 8 (`sigma_mod3_lap`,
-`walker_mod3_lap`).
+**Run backward, the step is multiplication by 1/φ.** See [One table, two ways to read it](#one-table-two-ways-to-read-it)
+above (`qmat_underOne`, `walker_mul_sigma`, `step_back`, `flipped_fib`, `sigma_mod3_lap`, `walker_mod3_lap`).
 
 **The empty word is at every depth.** `σⁿ(ε) = ε` for every `n` (`sigma_iterate_nil`). `ε` sits inside every
 iterate, and its count, `0ω = T(0,0)`, is the unit inside every count (`nil_in_every_iterate`). Every golden
